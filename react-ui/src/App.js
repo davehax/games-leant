@@ -15,7 +15,7 @@ class App extends Component {
             signedIn: false,
             currentItem: '',
             items: [],
-            itemRef: null,
+            itemsRef: null,
             refKeyBase: '',
             hasError: false,
             error: null
@@ -142,7 +142,7 @@ class App extends Component {
         } else {
 
             // Unbind our event handler
-            if (this.state.itemsRef !== null) {
+            if (typeof(this.state.itemsRef) !== 'undefined' && this.state.itemsRef !== null) {
                 this.state.itemsRef.off('value');
             }
 
