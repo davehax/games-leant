@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-// import logo from './logo.svg';
 import firebase from './firebase.js';
 import './App.css';
+import Game from './Game.js';
+let moment = require('moment');
 
 class App extends Component {
     constructor(props) {
@@ -13,44 +14,38 @@ class App extends Component {
             signedIn: false,
             currentItem: '',
             items: [],
+            itemRef: null,
+            refKeyBase: '',
             hasError: false,
             error: null
         }
 
-        this.signIn = this.signIn.bind(this);
-        this.signOut = this.signOut.bind(this);
         this.onAuthStateChanged = this.onAuthStateChanged.bind(this); // not sure if needed?!
-
         this.getRedirectResultSuccess = this.getRedirectResultSuccess.bind(this);
         this.getRedirectResultError = this.getRedirectResultError.bind(this);
 
+        this.addItem = this.addItem.bind(this);
+        this.editItem = this.editItem.bind(this);
+        this.removeItem = this.removeItem.bind(this);
+
         // Result from Redirect auth flow.
-        // [START getidptoken]
         firebase.auth().getRedirectResult()
             .then(this.getRedirectResultSuccess)
             .catch(this.getRedirectResultError);
-        // [END getidptoken]
-
 
         // Listening for auth state changes.
-        // [START authstatelistener]
         firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
     }
 
     getRedirectResultSuccess(result) {
         console.log(result.user);
         if (result.credential) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
             this.setState({
                 accessToken: result.credential.accessToken,
                 user: result.user
             });
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            // var token = result.credential.accessToken;
-            // [START_EXCLUDE]
-            // document.getElementById('quickstart-oauthtoken').textContent = token;
         } else {
-            // document.getElementById('quickstart-oauthtoken').textContent = 'null';
-            // [END_EXCLUDE]
             // somethings gone wrong ? :/
         }
         // The signed-in user info.
@@ -65,7 +60,7 @@ class App extends Component {
         // var email = error.email;
         // The firebase.auth.AuthCredential type that was used.
         // var credential = error.credential;
-        // [START_EXCLUDE]
+
         if (errorCode === 'auth/account-exists-with-different-credential') {
             alert('You have already signed up with a different auth provider for that email.');
             // If you are using multiple auth providers on your app you should handle linking
@@ -73,7 +68,6 @@ class App extends Component {
         } else {
             console.error(error);
         }
-        // [END_EXCLUDE]
 
         this.setState({
             hasError: true,
@@ -82,11 +76,10 @@ class App extends Component {
     }
 
     onAuthStateChanged(user) {
+        console.log('Auth state changed');
         if (user) {
-            this.setState({
-                signedIn: true,
-                user: user
-            })
+            console.log('if (user) {...}')
+            
 
             // User is signed in.
             // var displayName = user.displayName;
@@ -96,50 +89,106 @@ class App extends Component {
             // var isAnonymous = user.isAnonymous;
             // var uid = user.uid;
             // var providerData = user.providerData;
-            // [START_EXCLUDE]
-            // document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
-            // document.getElementById('quickstart-sign-in').textContent = 'Sign out';
-            // document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
-            // [END_EXCLUDE]
+
+            // Connect to FireBase 'Items'
+            const refKey =  `games_${user.uid}`;
+            let itemsRef = firebase.database().ref(refKey);
+
+            // .on('value', func) will trigger as soon as the event handler is bound, 
+            // and when any additional updates are made to 'Items'
+            itemsRef.on('value', (snapshot) => {
+                let items = snapshot.val();
+                let newState = [];
+
+                // let's see!
+                console.log(snapshot.val());
+
+                for (let item in items) {
+                    let obj = {
+                        id: item,
+                        created: items[item].created,
+                        modified: items[item].modified,
+                        game: items[item].game,
+                        person: items[item].person,
+                        platform: items[item].platform,
+                        dateLeant: items[item].dateLeant,
+                        dateReturned: items[item].dateReturned
+                    };
+
+                    obj.dateLeant = this.toMoment(obj.dateLeant);
+                    obj.dateReturned = this.toMoment(obj.dateReturned);
+
+                    newState.push(obj);
+                }
+
+                newState = newState.sort((a, b) => {
+                    return new moment(a.created) < new moment(b.created)
+                });
+
+                this.setState({
+                    items: newState
+                });
+            });
+
+            // Update state with signedIn, user and itemsRef
+            this.setState({
+                signedIn: true,
+                user: user,
+                itemsRef: itemsRef,
+                refKeyBase: refKey
+            });
+
         } else {
+
+            // Unbind our event handler
+            if (this.state.itemsRef !== null) {
+                this.state.itemsRef.off('value');
+            }
+
+            // User is signed out.
             this.setState({
                 signedIn: false,
-                user: null
+                user: null,
+                items: [],
+                itemsRef: null,
+                refKeyBase: ''
             });
-            // User is signed out.
-            // [START_EXCLUDE]
-            // document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
-            // document.getElementById('quickstart-sign-in').textContent = 'Sign in with Google';
-            // document.getElementById('quickstart-account-details').textContent = 'null';
-            // document.getElementById('quickstart-oauthtoken').textContent = 'null';
-            // [END_EXCLUDE]
         }
-    }
-
-    signIn() {
-
-    }
-
-    signOut() {
-
     }
 
     toggleSignIn() {
         if (!firebase.auth().currentUser) {
-            // [START createprovider]
+            // Create Google Authentication provider
             var provider = new firebase.auth.GoogleAuthProvider();
-            // [END createprovider]
-            // [START addscopes]
+            // Add provider scope
             provider.addScope('https://www.googleapis.com/auth/plus.login');
-            // [END addscopes]
-            // [START signin]
+            // Sign in
             firebase.auth().signInWithRedirect(provider);
-            // [END signin]
         } else {
-            // [START signout]
+            // Sign out
             firebase.auth().signOut();
-            // [END signout]
         }
+    }
+
+    addItem(item) {
+        this.state.itemsRef.push(item);
+    }
+
+    editItem(item) {
+        const itemRef = this.state.itemsRef.child(item.id);
+        itemRef.update(item);
+    }
+
+    removeItem(item) {
+        const itemRef = this.state.itemsRef.child(item.id);
+        itemRef.remove();
+    }
+
+    toMoment(val) {
+        if (typeof(val) !== 'undefined') {
+            return new moment(new Date(val));
+        }
+        return null;
     }
 
     componentDidMount() { }
@@ -148,8 +197,30 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <h1>Games Leant</h1>
-                <button onClick={this.toggleSignIn}>{this.state.signedIn ? 'Sign out' : 'Sign in with Google'}</button>
+                <div className="App-header">
+                    <div className="App-body">
+                        <h1>Games Leant</h1>
+                    </div>
+                </div>
+                <div className="App-body">
+                    <button className="btn" onClick={this.toggleSignIn}>{this.state.signedIn ? 'Sign out' : 'Sign in with Google'}</button>
+                    <div className="App-items">
+                    {
+                        this.state.signedIn && (
+                            <Game isNew={true} isEditing={true} onSave={this.addItem} /> 
+                        )
+                    }
+                    {
+                        this.state.signedIn ? (
+                            this.state.items.map((item) => {
+                                return <Game key={item.id} item={item} isNew={false} isEditing={false} onSave={this.editItem} onDelete={this.removeItem} />
+                            })
+                        ) : (
+                            <p>Please sign in to view items.</p>
+                        )
+                    }
+                    </div>
+                </div>
             </div>
         );
     }

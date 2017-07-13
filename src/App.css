@@ -1,24 +1,112 @@
+/* Classes */
 .App {
-  text-align: center;
+    font-size: 16px;
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+    background-color: #222;
+    color: #fff;
 }
 
-.App-intro {
-  font-size: large;
+.App-body {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* GAME-ITEM */
+.game-item {
+    /*padding: 20px 30px;*/
+    display: inline-block;
+    background-color: #fff;
+    border: 1px solid #1565C0;
+    border-radius: 2px;
+    margin: 1em 2%;
+    width: calc(46% - 2px);
+    transition: background-color ease 0.2s, border-color ease 0.2s;
+}
+
+.game-item--title h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.game-item--data-row {
+    padding: 10px 0px;
+}
+
+.game-item--label {
+    display: inline-block;
+    width: 120px;
+}
+
+.game-item--padding {
+    padding: 20px 30px;
+}
+
+.game-item--button-row {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-justify-content: flex-end;
+    justify-content: flex-end;
+
+    background-color: #1565C0;
+    transition: background-color ease 0.2s, border-color ease 0.2s;
+}
+
+.game-item--button-row .btn {
+    margin-left: 10px;
+}
+
+/* GAME-ITEM IS-EDITING */
+.game-item.is-editing { 
+    background-color: #E8EAF6;
+    border-color: #3F51B5;
+}
+.game-item.is-editing .game-item--button-row { background-color: #3F51B5; }
+
+/* GAME-ITEM IS-NEW */
+.game-item.is-new { 
+    background-color: #FFF8E1;
+    border-color: #FFC107; 
+}
+.game-item.is-new .game-item--button-row { background-color: #FFC107; }
+
+
+/* BTN */
+.btn, .input {
+    font-size: 14px;
+}
+.btn {
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+    border-radius: 2px;
+    padding: 7px 10px;
+    background-color: #2196F3;
+    color: #fff;
+
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.35);
+}
+.btn--red { background-color: #D32F2F; }
+.btn--green { background-color: #4CAF50; }
+.btn--gray { background-color: #9E9E9E; }
+
+/* INPUT */
+.input {
+    display: inline-block;
+    padding: 6px 9px;
+    border: 1px solid #dbdbdb;
+}
+
+.input[disabled] {
+    border-color: transparent;
+    color: #000;
 }
