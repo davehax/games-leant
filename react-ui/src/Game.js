@@ -11,9 +11,6 @@ class Game extends Component {
     constructor(props) {
         super(props);
 
-        console.log(props);
-        console.log(this.props);
-
         // Define our item model
         // let item = typeof (this.props.item) !== 'undefined' ? this.props.item : this.getGameModel();
         let item = this.getGameModel();
@@ -158,8 +155,6 @@ class Game extends Component {
         if (this.state.isEditing) {
             cssClass.push('is-editing');
         }
-
-
 
         return (
             // Our container

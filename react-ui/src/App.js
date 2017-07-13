@@ -192,9 +192,6 @@ class App extends Component {
         return null;
     }
 
-    componentDidMount() { }
-    componentWillUnmount() { }
-
     render() {
         let appClass = ['App'];
         if (this.state.signedIn) {
