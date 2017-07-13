@@ -8,11 +8,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Priority - serve static files from our build folder
-app.use(express.static(path.resolve(__dirname, '../build')));
+app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
 // Enable Single Page Application routing by resolving to the react app for all other requests
 app.use('*', (request, response) => {
-    response.sendFile(path.resolve(__dirname, '../build', 'index.html'));
+    response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
 });
 
 // Finally, 'listen' on PORT
