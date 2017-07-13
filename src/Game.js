@@ -142,7 +142,9 @@ class Game extends Component {
         e.preventDefault();
 
         if (typeof (this.props.onDelete) === 'function') {
-            this.props.onDelete(this.getItemFromState());
+            if (window.confirm("This will permanently delete the item. Please confirm you wish to delete this item.")) {
+                this.props.onDelete(this.getItemFromState());
+            }
         }
     }
 
@@ -241,7 +243,7 @@ class Game extends Component {
                     <div className="game-item--padding game-item--button-row">
                         {/*Cancel button if we're in edit mode and this isn't a new item*/}
                         {this.state.isEditing && !this.props.isNew && (
-                            <button onClick={this.cancelEdit} className="btn btn--gray">Cancel</button>
+                            <button onClick={this.cancelEdit} className="btn">Cancel</button>
                         )}
                         {/*Save button if we're in edit mode*/}
                         {this.state.isEditing && (

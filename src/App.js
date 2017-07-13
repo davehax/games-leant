@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import firebase from './firebase.js';
 import './App.css';
 import Game from './Game.js';
+import Profile from './Profile.js';
 let moment = require('moment');
 
 class App extends Component {
@@ -195,15 +196,26 @@ class App extends Component {
     componentWillUnmount() { }
 
     render() {
+        let appClass = ['App'];
+        if (this.state.signedIn) {
+            appClass.push('App--signedin');
+        }
         return (
-            <div className="App">
-                <div className="App-header">
-                    <div className="App-body">
-                        <h1>Games Leant</h1>
+            <div className={appClass.join(' ')}>
+                <div className="App-authorisation">
+                    <div className="App-body cf">
+                        <div className="pull-left">
+                            <h1>Games Leant</h1>
+                        </div>
+                        <div className="pull-right">
+                            { this.state.signedIn && (
+                                <Profile displayName={this.state.user.displayName} photoUrl={this.state.user.photoURL} photoAlt={this.state.user.displayName} />
+                            ) }
+                            <button className="btn" onClick={this.toggleSignIn}>{this.state.signedIn ? 'Sign out' : 'Sign in with Google'}</button>
+                        </div>
                     </div>
                 </div>
                 <div className="App-body">
-                    <button className="btn" onClick={this.toggleSignIn}>{this.state.signedIn ? 'Sign out' : 'Sign in with Google'}</button>
                     <div className="App-items">
                     {
                         this.state.signedIn && (
