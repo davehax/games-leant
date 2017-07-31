@@ -143,7 +143,7 @@ class GameViewSinglePage extends Component {
 
                 this.setState({
                     item: {
-                        id: item.id,
+                        id: itemId,
                         created: item.created,
                         modified: item.modified,
                         game: item.game,
@@ -313,7 +313,7 @@ class GameEditSinglePage extends Component {
                 if (typeof(item) !== 'undefined' && item !== null) {
                     this.setState({
                         item: {
-                            id: item.id,
+                            id: itemId,
                             created: item.created,
                             modified: item.modified,
                             game: item.game,
@@ -411,23 +411,7 @@ class GameEdit extends Component {
 
     // For data entry, we must convert some state properties into a new form
     getItemFromState() {
-        let item = getItemFromStateItem(this.state.item);
-
-        // let item = {
-        //     created: new moment(this.state.item.created).toISOString(),
-        //     modified: new moment().toISOString(),
-        //     game: this.state.item.game,
-        //     person: this.state.item.person,
-        //     platform: this.state.item.platform,
-        //     dateLeant: this.state.item.dateLeant === null ? null : this.state.item.dateLeant.toISOString(),
-        //     dateReturned: this.state.item.dateReturned === null ? null : this.state.item.dateReturned.toISOString()
-        // }
-
-        // if (typeof (this.state.item.id) !== 'undefined') {
-        //     item.id = this.state.item.id;
-        // }
-
-        return item;
+        return getItemFromStateItem(this.state.item);
     }
     
     render() {
