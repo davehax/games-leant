@@ -150,6 +150,60 @@
 .game-item.is-new .game-item--button-row { background-color: #FFC107; }
 
 
+
+
+/* GAME */
+.game {
+    display: block;
+    max-width: 600px;
+    margin: 0 auto 1.5em auto;
+    border: 2px solid #1565C0;
+    border-radius: 2px;
+
+    background-color: #fff;
+}
+
+.game.game--returned { border-color: #4CAF50; }
+.game.game--returned .game--title { background-color: #4CAF50; }
+
+.game.game--edit { border-color: #FFC107; }
+.game.game--edit .game--title { background-color: #FFC107; color: #000; }
+
+.game--title,
+.game--detail-container,
+.game--edit-container,
+.game--meta-container,
+.game--toolbar {
+    padding: 10px 12px;
+}
+
+.game--title {
+    margin: 0;
+    background-color: #1565C0;
+    color: #fff;
+}
+
+.game--meta {
+    font-style: italic;
+}
+
+.game--detail-item,
+.game--edit-item {
+    padding: 2px 0px;
+}
+
+.game--detail-item:nth-child(2n+1),
+.game--edit-item:nth-child(2n+1) {
+    background-color: #E3F2FD;
+}
+
+.game--detail-item span:first-child,
+.game--edit-item label > span:first-child {
+    display: inline-block;
+    width: 130px;
+    font-weight: bold;
+}
+
 /* BTN */
 .btn, .input {
     font-size: 14px;
@@ -162,9 +216,11 @@
     padding: 7px 10px;
     background-color: #2196F3;
     color: #fff;
+    text-decoration: none;
 
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.35);
 }
+.btn + .btn { margin-left: 10px; }
 .btn--red { background-color: #D32F2F; }
 .btn--green { background-color: #4CAF50; }
 .btn--gray { background-color: #9E9E9E; }
