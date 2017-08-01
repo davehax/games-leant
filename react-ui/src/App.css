@@ -28,8 +28,24 @@
 /* Classes */
 .App {
     font-size: 16px;
+    line-height: 1.6;
     transition: background-color ease 0.2s;
     min-height: 100vh;
+}
+
+.App,
+input,
+textarea {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.App h1,
+.App h2,
+.App h3,
+.App h4,
+.App h5,
+.App h6 {
+    line-height: 1.15;
 }
 
 .App.App--signedin {
@@ -89,68 +105,6 @@
     margin: 0px 10px;
 }
 
-/* GAME-ITEM */
-.game-item {
-    /*padding: 20px 30px;*/
-    display: inline-block;
-    background-color: #fff;
-    border: 1px solid #1565C0;
-    border-radius: 2px;
-    margin: 1em 2%;
-    width: calc(46% - 2px);
-    transition: background-color ease 0.2s, border-color ease 0.2s;
-}
-
-.game-item--title h2 {
-    font-size: 20px;
-    margin: 0;
-}
-
-.game-item--data-row {
-    padding: 10px 0px;
-}
-
-.game-item--label {
-    display: inline-block;
-    width: 120px;
-}
-
-.game-item--padding {
-    padding: 20px 30px;
-}
-
-.game-item--button-row {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-    -webkit-justify-content: flex-end;
-    justify-content: flex-end;
-
-    background-color: #1565C0;
-    transition: background-color ease 0.2s, border-color ease 0.2s;
-}
-
-.game-item--button-row .btn {
-    margin-left: 10px;
-}
-
-/* GAME-ITEM IS-EDITING */
-.game-item.is-editing { 
-    background-color: #E8EAF6;
-    border-color: #3F51B5;
-}
-.game-item.is-editing .game-item--button-row { background-color: #3F51B5; }
-
-/* GAME-ITEM IS-NEW */
-.game-item.is-new { 
-    background-color: #FFF8E1;
-    border-color: #FFC107; 
-}
-.game-item.is-new .game-item--button-row { background-color: #FFC107; }
-
-
-
 
 /* GAME */
 .game {
@@ -189,7 +143,7 @@
 
 .game--detail-item,
 .game--edit-item {
-    padding: 2px 0px;
+    padding: 2px 4px;
 }
 
 .game--detail-item:nth-child(2n+1),
@@ -202,6 +156,13 @@
     display: inline-block;
     width: 130px;
     font-weight: bold;
+}
+
+.game--edit-item label > span:first-child + input {
+    font-size: 16px;
+    width: 198px;
+    padding: 12px 18px;
+    box-sizing: border-box;
 }
 
 /* BTN */

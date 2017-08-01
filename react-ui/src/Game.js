@@ -3,39 +3,9 @@ import { Link, Redirect} from 'react-router-dom';
 import firebase, { firebaseStore } from './firebase.js';
 import { SingleDatePicker } from 'react-dates';
 import 'react-dates/lib/css/_datepicker.css';
-// let clone = require('clone');
 import clone from 'clone';
+import { toMoment, getItemFromStateItem } from './Util.js';
 let moment = require('moment');
-
-// Create a moment object from a valid DateTime object or DateTime string
-const toMoment = (val) => {
-    if (typeof(val) !== 'undefined') {
-        return new moment(new Date(val));
-    }
-    return null;
-}
-
-// Get our game item from a state item object
-const getItemFromStateItem = (item) => {
-    let o = {
-        created: new moment(item.created).toISOString(),
-        modified: new moment().toISOString(),
-        game: item.game,
-        person: item.person,
-        platform: item.platform,
-        dateLeant: item.dateLeant === null ? null : item.dateLeant.toISOString(),
-        dateReturned: item.dateReturned === null ? null : item.dateReturned.toISOString()
-    }
-
-    if (typeof (item.id) !== 'undefined') {
-        o.id = item.id;
-    }
-
-    return o;
-}
-
-
-
 
 // Page - Game View All
 class GameViewAllPage extends Component {
@@ -71,12 +41,9 @@ class GameViewAllPage extends Component {
                         game: items[item].game,
                         person: items[item].person,
                         platform: items[item].platform,
-                        dateLeant: items[item].dateLeant,
-                        dateReturned: items[item].dateReturned
+                        dateLeant: toMoment(items[item].dateLeant),
+                        dateReturned: toMoment(items[item].dateReturned)
                     };
-
-                    obj.dateLeant = toMoment(obj.dateLeant);
-                    obj.dateReturned = toMoment(obj.dateReturned);
 
                     newState.push(obj);
                 }
@@ -85,7 +52,6 @@ class GameViewAllPage extends Component {
                     return new moment(a.created) < new moment(b.created)
                 });
 
-                console.log('Updating state with new data snapshot');
                 this.setState({
                     items: newState
                 });
@@ -220,7 +186,7 @@ class GameView extends Component {
                 <div className="game--toolbar cf">
                     <div className="pull-right">
                         <Link to={`/games/${this.props.item.id}`} className="btn">View Detail</Link>
-                        <Link to={`/games/${this.props.item.id}/edit`} className="btn">Edit</Link>
+                        <Link to={`/games/${this.props.item.id}/edit`} className="btn btn--green">Edit</Link>
                     </div>
                 </div>
             </div>
@@ -415,7 +381,6 @@ class GameEdit extends Component {
     }
     
     render() {
-        let dateLeant = new moment(this.props.item.dateLeant).format();
         let isReturned = typeof(this.props.item.dateReturned) !== 'undefined';
         let className = ['game', 'game--edit'];
         if (isReturned) {

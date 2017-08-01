@@ -1,13 +1,31 @@
-import React, { Component } from 'react';
-import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
-import PrivateRoute from './privateroute.js';
-import firebase, { firebaseStore } from './firebase.js';
 import './App.css';
-import { GameViewAllPage, GameViewSinglePage, GameEditSinglePage, GameNewPage } from './Game.js';
-// import Profile from './Profile.js';
+import firebase, { firebaseStore } from './firebase.js';
+import React, { Component } from 'react';
+import { BrowserRouter, Route, Redirect, Switch, Link } from 'react-router-dom';
+import PrivateRoute from './PrivateRoute.js';
 import Header from './Header.js';
-let moment = require('moment');
+// import { GameViewAllPage, GameViewSinglePage, GameEditSinglePage, GameNewPage } from './Game.js';
+import GameViewAllPage, { GameViewSinglePage } from './GameView.js';
+import GameEditSinglePage from './GameEdit.js';
+import GameNewPage from './GameNew.js';
+import LoginPage from './LoginPage.js';
 
+// Our '404' class, I guess
+class NoMatch extends Component {
+    render() {
+        return (
+            <div>
+                <h1>Uh oh, that's a miss!</h1>
+                <p>Unfortunately that URL doesn't point to anything, yet.</p>
+                <p>
+                    <Link to="/games" className="btn">View all Games Leant</Link>
+                </p>
+            </div>
+        )
+    }
+}
+
+// Our APP! The big boss, the main man, here's the code to follow
 class App extends Component {
     constructor(props) {
         super(props);
@@ -18,8 +36,10 @@ class App extends Component {
 
         this.onAuthStateChanged = this.onAuthStateChanged.bind(this); // not sure if needed?!
         this.getRedirectResultSuccess = this.getRedirectResultSuccess.bind(this);
-        this.getRedirectResultError = this.getRedirectResultError.bind(this);
+        this.getRedirectResultError = this.getRedirectResultError.bind(this);        
+    }
 
+    componentDidMount() {
         // Result from Redirect auth flow.
         firebase.auth().getRedirectResult()
             .then(this.getRedirectResultSuccess)
@@ -30,8 +50,6 @@ class App extends Component {
     }
 
     getRedirectResultSuccess(result) {
-        console.log('Getting redirect result - success');
-        console.log(result);
         if (result.credential) {
             // This gives you a Google Access Token. You can use it to access the Google API.
             this.setState({
@@ -41,12 +59,9 @@ class App extends Component {
         } else {
             // somethings gone wrong ? :/
         }
-        // The signed-in user info.
-        // var user = result.user;
     }
 
     getRedirectResultError(error) {
-        console.log('Getting redirect result - error');
         // Handle Errors here.
         var errorCode = error.code;
         // var errorMessage = error.message;
@@ -70,7 +85,6 @@ class App extends Component {
     }
 
     onAuthStateChanged(user) {
-        console.log('Auth state changed');
         if (user) {
             firebaseStore.setUser(user);
 
@@ -92,30 +106,48 @@ class App extends Component {
         firebaseStore.toggleSignIn();
     }
 
-    render() {
+    render(extra) {
+        // Define a state object that mimics React Router 'this.props.location.state'
+        let authRedirectState = {
+            from: {
+                pathname: window.location.pathname
+            }
+        };
+
+        // If the pathname is equal to '/login' we must prevent a redirect loop by specifying to '/games' instead
+        let lPathName = window.location.pathname.toLowerCase();
+        if (lPathName === '/login' || lPathName === '/' || lPathName === '') {
+            authRedirectState.from.pathname = '/games';
+        }
+
+        // App css classes
         let appClass = ['App'];
         if (this.state.signedIn) {
             appClass.push('App--signedin');
         }
+
         return (
             <BrowserRouter>
                 <div className={appClass.join(' ')}>
                     <Header toggleSignIn={this.toggleSignIn} signedIn={this.state.signedIn} user={firebaseStore.store.user} />
                     <div className="App-body">
                         <div className="App-items">
-                            {this.state.signedIn ? (
-                                <div>
-                                    <Switch>
-                                        <Route path="/games/new" component={GameNewPage} />
-                                        <Route path="/games/:id/edit" component={GameEditSinglePage} /> 
-                                        <Route path="/games/:id" component={GameViewSinglePage} />
-                                        <Route path="/games" component={GameViewAllPage} />
-                                    </Switch>
-                                    <Redirect to="/games" />
-                                </div>
-                            ) : (
-                                <Redirect to="/" />
-                            )}
+                            {/* Switch between our supported routes */}
+                            <Switch>
+                                <PrivateRoute path="/games/new" component={GameNewPage} />
+                                <PrivateRoute path="/games/:id/edit" component={GameEditSinglePage} /> 
+                                <PrivateRoute path="/games/:id" component={GameViewSinglePage} />
+                                <PrivateRoute path="/games" component={GameViewAllPage} />
+                                <Route path="/login" component={LoginPage} />
+                                {/* If no route has been matched, let our users know */}
+                                <Route component={NoMatch} />
+                            </Switch>
+                            
+                            {/* force login -- we pass in a custom state object defined above */}
+                                <Redirect to={{
+                                pathname: '/login',
+                                state: authRedirectState
+                            }} /> 
                         </div>
                     </div>
                 </div>
