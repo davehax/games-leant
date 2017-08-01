@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route, Redirect, Switch, Link } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute.js';
 import Header from './Header.js';
-// import { GameViewAllPage, GameViewSinglePage, GameEditSinglePage, GameNewPage } from './Game.js';
 import GameViewAllPage, { GameViewSinglePage } from './GameView.js';
 import GameEditSinglePage from './GameEdit.js';
 import GameNewPage from './GameNew.js';
